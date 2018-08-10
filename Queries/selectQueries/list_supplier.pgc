@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+    char *a,*b;
+    long p;
+    int n;
+    int m=1;
+  EXEC SQL END DECLARE SECTION;
+  
+
+int main()
+{
+
+    
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+        EXEC SQL select count(*) INTO:n FROM supplier;
+       
+    
+      
+         while(m<=n)
+            {
+          EXEC SQL SELECT name, city, phone_number INTO :a,:b,:p FROM supplier where sid = :m;
+                    printf("%-30s",a);
+                    printf("%-30s",b);
+                    printf("%ld\n",p);
+        m=m+1;
+        }
+ 
+       
+    return 0;
+}

@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+#include <libpq-fe.h>
+
+#include <stdlib.h>
+
+
+
+EXEC SQL BEGIN DECLARE SECTION;
+char **a;
+int *p;
+int *b;
+int *q;
+int n,c=0,*l;
+char **u;
+
+
+EXEC SQL END DECLARE SECTION;
+
+int main()
+
+{
+	 EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    	 EXEC SQL set search_path to jewellery_shop;
+	EXEC SQL select count(*) INTO:n FROM customer_transaction where cid=1;
+	EXEC SQL SELECT c_name,c_transid,bill_id,date,amount,remaining INTO :a,:b,:p,:u,:l,:q FROM (customer_transaction as c1 natural join 		 customer) where cid=1 order by c_transid;
+	
+	
+	while(c<n)
+	{	printf("%2d. %-20s %d %d %s %-7d %-7d\n",c,a[c],b[c],p[c],u[c],l[c],q[c]);
+		c++;
+	}
+			return 0;
+	
+		
+}
+
+    
+
+

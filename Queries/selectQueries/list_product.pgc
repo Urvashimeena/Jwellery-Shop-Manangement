@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+	EXEC SQL BEGIN DECLARE SECTION;
+	char *a,*b,*c;
+	float j,k;
+	int p;
+	int n;
+	int m=501; 
+ EXEC SQL END DECLARE SECTION;
+int main()
+{
+	
+
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(pid) INTO:n FROM product;
+
+		printf("product\n");
+		
+		while(m<501+n)
+		{
+			EXEC SQL SELECT name,material,style,percentage,weight,no_peices INTO :a,:b,:c,:j,:k,:p from product where pid=:m;
+			printf("%4d. %-30s %-20s %-20s %-4.2f    %-10.3f   %-4d\n",m,a,b,c,j,k,p);
+			m=m+1;
+		}
+		
+		
+    return 0;
+}
+
+

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    int sid;
+    bool purchased;
+    
+ EXEC SQL END DECLARE SECTION;
+int main()
+{	
+	printf("Enter cid\n");
+        scanf("%d",&cid);
+	printf("Enter sid");
+	scanf("%d",&sid);
+
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+
+	EXEC SQL  UPDATE customer_scheme SET purchased=true where cid=:cid and sid=:sid; 
+
+
+		
+	EXEC SQL COMMIT;
+	return 0;
+}

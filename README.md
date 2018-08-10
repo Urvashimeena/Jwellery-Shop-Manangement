@@ -1,1 +1,1 @@
-# Jwellery-Shop-Manangement
+# Jewellary-Shop-Database

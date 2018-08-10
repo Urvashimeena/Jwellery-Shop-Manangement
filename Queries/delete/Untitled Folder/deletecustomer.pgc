@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    
+   long phn;
+ EXEC SQL END DECLARE SECTION;
+int main()
+{	
+	printf("Enter cid\n");
+        scanf("%d",&cid);
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+	EXEC SQL DELETE from customer WHERE cid=:cid;
+	EXEC SQL COMMIT;
+}

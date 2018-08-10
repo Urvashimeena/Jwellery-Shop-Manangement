@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    char email[20];
+   long phn;
+ EXEC SQL END DECLARE SECTION;
+int main()
+{	
+	printf("Enter cid\n");
+        scanf("%d",&cid);
+	printf("Enter phone no.\n");
+	scanf("%ld",&phn);
+	printf("Enter email\n");
+	scanf("%s",email);
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+
+	EXEC SQL UPDATE customer SET cphone_no=:phn,c_email=:email where cid=:cid;
+	EXEC SQL COMMIT;
+	return 0;
+}

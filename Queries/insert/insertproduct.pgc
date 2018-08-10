@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+   
+    char name[20],material[20],style[20];
+	float percentage,weight;
+	int pid,peices;
+ 
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{	
+	
+	
+	printf("pid\n");
+    	scanf("%d",&pid);
+	printf("name\n");
+    	scanf("%10s",name);
+	printf("material\n");
+    	scanf("%10s",material);
+	printf("style\n");
+	scanf("%10s",style);
+	printf("percentage\n");
+	scanf("%f",&percentage);
+	printf("weight\n");
+	scanf("%f",&weight);
+	printf("no_peices\n");
+	scanf("%d",&peices);
+        
+    	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	
+	EXEC SQL INSERT INTO product(pid,name,material,style,percentage,weight,no_peices)
+         VALUES(:pid,:name,:material,:style,:percentage,:weight,:peices);
+	
+
+	EXEC SQL COMMIT;
+	printf("succefully inserted");
+	return 0;     
+}

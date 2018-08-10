@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+	char **a,**b;
+	float *g,*s;
+	int *st,*c,*p,*pt;
+	int n,i=0,m;
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{
+		printf("Enter SID");
+		scanf("%d",&m);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM supplier_accounting where sid=:m;
+	 	printf("%d",n);
+		printf("All Supplier Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,name,silverp,goldp,s_transdate INTO :st,:a,:s,:g,:b from supplier natural join supplier_accounting 				where sid=:m;
+			while(i<n)
+			{
+				printf("%-5d  %-30s %-8.3f   %-8.3f   %-20s\n",st[i],a[i],s[i],g[i],b[i]);
+				i++;
+					
+			}
+		
+    return 0;
+}
+
+

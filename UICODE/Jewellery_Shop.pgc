@@ -1,0 +1,1443 @@
+#include<stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+
+int cmortgage_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;			//cmortage transaction
+
+	char a[50][30],b[50][30];
+	
+	int st[30],c[30],s[30],p[30],pt[30];
+	int n,i=0,m;
+ EXEC SQL END DECLARE SECTION;
+
+		printf("Enter MID");
+		scanf("%d",&m);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM mortgage_transaction where mid=:m;
+	 
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT m_transid,customer_name, amount,interest_paid,remaining,m_transdate INTO :st,:a,:s,:p,:pt,:b from mortgage_transaction natural join mortgage where mid=:m; 
+			while(i<n)
+			{
+				printf("%-5d  %-30s %-10d   %-7d   %-10d  %-20s\n",st[i],a[i],s[i],p[i],pt[i],b[i]);
+				i++;
+					
+			}
+ return 0;
+}
+
+int cscheme_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;             
+	char a[50][30],b[50][30];				//cscheme_transaction
+	
+	int st[30],c[30],s[30],p[30],pt[30],d,inst,per;
+	int n,i=0,m,l,v;
+	bool check;
+ EXEC SQL END DECLARE SECTION;
+
+	int x,y;
+		printf("Enter Customer ID");
+		scanf("%d",&m);
+		printf("Enter Scheme ID");
+		scanf("%d",&l);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM scheme_transaction where cid=:m and schemeid=:l;
+		if(n==0)
+			printf("YOU HAVE ENTERED WRONG SCHEME ID OR CUSTOMER ID");
+		else
+		{	
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,cid,c_name, schemeid,paid,penalty,date INTO :st,:c,:a,:s,:p,:pt,:b from scheme_transaction natural 				join customer where cid=:m and schemeid=:l; 
+			while(i<n)
+			       {
+				  printf("%-3d   %-3d  %-30s %-3d   %-6d   %-5d  %-20s\n",st[i],c[i],a[i],s[i],p[i],pt[i],b[i]);
+				  i++;
+				}
+					
+		
+			EXEC SQL select duration,installment,period INTO :d,:inst,:per from scheme where scheme_id=:l;
+			printf("%d %d %d\n",d,inst,per);
+			x=d/per;
+			y=x*inst;
+			EXEC SQL select purchased INTO:check from customer_scheme where cid=:m and sid=:l;
+			EXEC SQL select sum(paid) INTO:v from scheme_transaction where cid=:m and schemeid=:l;
+			if(v==y&&check==true)
+				printf("Scheme complete and item has been purchased");
+			else if(v==y&&check==false)
+				printf("Scheme complete but item has not been purchased");
+		}
+		
+    return 0;
+}
+
+
+int Customer_list()					//customer_list
+{
+	EXEC SQL BEGIN DECLARE SECTION;
+	char a[30],b[30];
+	int p;
+	int n;
+	int m=1; 
+ 	EXEC SQL END DECLARE SECTION;	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    EXEC SQL set search_path to jewellery_shop;
+    EXEC SQL select count(cid) INTO:n FROM customer;
+    printf("Customers\n");
+    while(m<=n)
+     {
+    EXEC SQL SELECT c_name,c_city,cphone_no INTO :a,:b,:p FROM customer where cid = :m;
+    
+    printf("%2d. %-50s\t",m,a);
+    printf("%-30s\t",b);
+    printf("%d\n",p);
+    m=m+1;
+    }
+    return 0;
+}
+
+
+int customer_scheme()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30];
+	//float j,k;
+	int c[30],s[30];
+	int n,i=0;
+ EXEC SQL END DECLARE SECTION;                        		//customer_scheme
+		
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM customer_scheme;
+	 
+		printf("Customers' Scheme\n");
+		
+		
+			EXEC SQL select cid,c_name,sid,start_date INTO :c,:a,:s,:b from customer_scheme natural join customer; 
+			//printf("%2d. %-30s %-20s %-20s %-4.2f %7.3f %-4d ",a,b,c,j,k,p);
+			while(i<n)
+			{
+				printf("%-3d %-50s %-4d %-15s\n",c[i],a[i],s[i],b[i]);
+				i++;
+					
+			}
+	return 0;
+}
+
+int list_employee()
+{
+EXEC SQL BEGIN DECLARE SECTION;			//list_employee
+char a[30],b[30];
+int n,p,s;
+int m=1;  
+EXEC SQL END DECLARE SECTION;
+
+ 	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    EXEC SQL set search_path to jewellery_shop;
+    EXEC SQL select count(eid) INTO:n FROM employee;
+  	printf("Employee\n");
+    while(m<=n)
+    {
+		EXEC SQL SELECT ename,phone_no,type,salary INTO :a,:p,:b,:s FROM employee where eid = :m;
+		
+		printf("%2d. %-30s %-20s %-10d %-10d\n",m,a,b,s,p);
+    	m=m+1;
+    }
+    return 0;
+
+}
+
+
+int list_mortgage()
+{
+	EXEC SQL BEGIN DECLARE SECTION;
+	char name[30];
+
+	int mid,p,phn,mdy[30],d;
+	int n;
+	int m=601;
+ 	EXEC SQL END DECLARE SECTION;	
+		
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(mid) INTO:n FROM mortgage;
+		printf("Customers\n");
+		printf("%d",n);
+		while(m<n+601)
+		{
+		EXEC SQL SELECT mid,customer_name,price,phone_no INTO :mid,:name,:d,:p,:phn FROM jewellery_shop.mortgage where mid = :m;
+		printf("%3d. %-30s %-6d %-10d\n",m,name,p,phn);
+		m=m+1;
+		}
+    return 0;
+}
+
+int list_product()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[30],b[30],c[30];
+	float j,k;
+	int p;
+	int n;
+	int m=501; 
+ EXEC SQL END DECLARE SECTION;			//list_product
+
+
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(pid) INTO:n FROM product;
+
+		printf("product\n");
+		
+		while(m<501+n)
+		{
+			EXEC SQL SELECT name,material,style,percentage,weight,no_peices INTO :a,:b,:c,:j,:k,:p from product where pid=:m;
+			printf("%4d. %-30s %-20s %-20s %-4.2f    %-10.3f   %-4d\n",m,a,b,c,j,k,p);
+			m=m+1;
+		}
+		
+		
+    return 0;
+}
+
+int list_scheme_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30];
+	
+	int st[30],c[30],s[30],p[30],pt[30];
+	int n,i=0;
+ EXEC SQL END DECLARE SECTION;
+						//list_scheme_transaction
+		
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM scheme_transaction;
+	 
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,cid,c_name, schemeid,paid,penalty,date INTO :st,:c,:a,:s,:p,:pt,:b from scheme_transaction natural join customer; 
+			while(i<n)
+			{
+				printf("%-3d   %-3d  %-30s %-3d   %-6d   %-5d  %-20s\n",st[i],c[i],a[i],s[i],p[i],pt[i],b[i]);
+				i++;
+					
+			}
+		
+    return 0;
+}
+
+int list_supplier()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    char a[30],b[30];
+    long p;				//list_supplier
+    int n;
+    int m=1;
+  EXEC SQL END DECLARE SECTION;
+ 
+
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+        EXEC SQL select count(*) INTO:n FROM supplier;
+       
+    
+      
+         while(m<=n)
+            {
+          EXEC SQL SELECT name, city, phone_number INTO :a,:b,:p FROM supplier where sid = :m;
+                    printf("%-30s",a);
+                    printf("%-30s",b);
+                    printf("%ld\n",p);
+        m=m+1;
+            }
+   return 0;
+}
+
+
+int mortgage_product()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30],c[50][30];
+	float g[30],s[30];					//mortgage_product
+	int st[30],p[30],pt[30];
+	int n,i=0,m;
+ EXEC SQL END DECLARE SECTION;
+
+
+		printf("Enter MID");
+		scanf("%d",&m);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM m_product_info where mid=:m;
+	 
+		printf("Products\n");
+		
+		
+			EXEC SQL SELECT customer_name,pname,weight,quantity,material INTO :a,:b,:s,:p,:c from  mortgage natural join  m_product_info where mid=:m;
+			while(i<n)
+			{
+				printf("%-30s %-20s %-8.3f %5d %-10s\n",a[i],b[i],s[i],p[i],c[i]);
+				i++;
+					
+			}
+		
+    return 0;
+}
+
+int mortgage_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30];
+					//mortgage_transaction
+	int st[30],c[30],s[30],p[30],pt[30];
+	int n,i=0;
+ EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM mortgage_transaction;
+	 
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT m_transid,customer_name, amount,interest_paid,remaining,m_transdate INTO :st,:a,:s,:p,:pt,:b from mortgage_transaction natural join mortgage;
+			while(i<n)
+			{
+				printf("%-5d  %-30s %-10d   %-7d   %-10d  %-20s\n",st[i],a[i],s[i],p[i],pt[i],b[i]);
+				i++;
+					
+			}
+		
+    return 0;
+}
+
+
+
+int scheme()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+char a[30];					//scheme
+int p;
+int b;
+int q;
+int n,c,l;
+int m=101;  
+EXEC SQL END DECLARE SECTION;
+
+ 	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    EXEC SQL set search_path to jewellery_shop;
+    EXEC SQL select count(scheme_id) INTO:n FROM scheme;
+  	c=m;
+    while(m<c+n)
+    {
+		EXEC SQL SELECT scheme_id,scheme_name,return_amount,installment,period INTO :l,:a,:b,:p,:q FROM scheme where scheme_id = :m;
+		printf("%2d  %s \t %-10d %d \t %d \n",l,a,b,p,q);
+		// printf("%2d %-50s\t",m,a);
+	   /* printf("%-30d\t",b);
+		printf("%d\n",p);
+		printf("%d\n",q);*/
+		m=m+1;
+    }
+    return 0;
+}
+
+int ssupplier_transaction()				//ssupplier_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30];
+	float g[30],s[30];
+	int st[30],c[30],p[30],pt[30];
+	int n,i=0,m;
+ EXEC SQL END DECLARE SECTION;
+
+
+		printf("Enter SID");
+		scanf("%d",&m);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM supplier_accounting where sid=:m;
+	 	printf("%d",n);
+		printf("All Supplier Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,name,silverp,goldp,s_transdate INTO :st,:a,:s,:g,:b from supplier natural join supplier_accounting 				where sid=:m;
+			while(i<n)
+			{
+				printf("%-5d  %-30s %-8.3f   %-8.3f   %-20s\n",st[i],a[i],s[i],g[i],b[i]);
+				i++;
+					
+			}
+		
+    return 0;
+
+}
+
+
+
+int supplier_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[50][30],b[50][30];
+	float g[30],s[30];
+	int st[30],c[30],p[30],pt[30];
+	int n,i=0;
+ EXEC SQL END DECLARE SECTION;					//supplier_transaction
+
+
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM supplier_accounting;
+	 
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,name,silverp,goldp,s_transdate INTO :st,:a,:s,:g,:b from supplier natural join supplier_accounting;
+			while(i<n)
+			{
+				printf("%-5d  %-20s %-12.3f   %-12.3f   %-20s\n",st[i],a[i],s[i],g[i],b[i]);
+				i++;
+					
+			}
+		
+    return 0;
+
+}
+int view_bill()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char a[30],b[50][30],date[30];
+	int p1,p2[30],p3[30],p4[30],p5[30];
+	int q1,q2,q3,q4,q5,q6,n,m=0,bid,cid;
+	float c1[30];	
+ 	EXEC SQL END DECLARE SECTION;	
+	printf("Enter Cid");
+	scanf("%d",&cid);
+	printf("Enter Bill id");
+	scanf("%d",&bid);
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+	EXEC SQL set search_path to jewellery_shop;
+	
+	EXEC SQL SELECT count(*)  INTO :n from product_info where bill_id=:bid;
+
+	EXEC SQL SELECT bill_id,c_name INTO :p1,:a FROM billing as b join customer as c on(b.cid=c.cid) where bill_id=:bid and c.cid=:cid;  
+	
+	printf("%10d  %20s \n\n\n",p1,a);
+	printf("name    \t      price_per_10g     wastage   labour    price_total   quantity\n\n");
+	
+	EXEC SQL SELECT name,price_per_10g,wastage,labour,price_total,quantity INTO :b,:c1,:p2,:p3,:p4,:p5 FROM (product as l2 join 		product_info as l1 ON(l2.pid=l1.pid)) where bill_id=701;
+	
+	
+	
+	while(m<n)
+	{
+	
+		printf("%-20s  %10.2f  %10d  %10d   %10d  %10d \n",b[m],c1[m],p2[m],p3[m],p4[m],p5[m]);
+		m++;	
+	}
+	
+	EXEC SQL SELECT discount,payable,net_profit,cash,gold_return,silver_return,date INTO :q1,:q2,:q3,:q4,:q5,:q6,:date from
+	billing where bill_id=701;
+	
+	printf("discount=%3d \n",q1);
+	printf("payable=%3d \n",q2);
+	printf("net_profit=%3d \n",q3);
+	printf("cash=%3d \n",q4);
+	printf("gold=%3d \n",q5);
+	printf("silver=%d \n",q6);
+	printf("date=%10s \n",date);
+
+	
+	 
+    return 0;
+}
+
+int list_customer_transaction()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+char a[50][30];
+int p[30],cid;
+int b[30];
+int q[30];
+int n,c=0,l[30];
+char u[50][30];
+
+
+EXEC SQL END DECLARE SECTION;
+
+	printf("ENTER CID");
+	scanf("%d",&cid);
+	 EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    	 EXEC SQL set search_path to jewellery_shop;
+	EXEC SQL select count(*) INTO:n FROM customer_transaction where cid=:cid;
+	EXEC SQL SELECT c_name,c_transid,bill_id,date,amount,remaining INTO :a,:b,:p,:u,:l,:q FROM (customer_transaction as c1 natural join 		 customer) where cid=:cid order by c_transid;
+	
+	
+	while(c<n)
+	{	printf("%2d. %-20s %d %d %s %-7d %-7d\n",c,a[c],b[c],p[c],u[c],l[c],q[c]);
+		c++;
+	}
+			return 0;
+	
+		
+}
+
+ int particular_product_purchased()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+char a[50][30];
+int p,m=0;
+char name[30];
+
+
+
+EXEC SQL END DECLARE SECTION;
+
+//int main()      //particular product
+
+{
+
+	printf("Enter the name of product\n");
+	scanf("%s",&name);
+	
+	    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+
+	    EXEC SQL set search_path to jewellery_shop;
+
+	    EXEC SQL select count(c_name) INTO :p from( (customer as c join billing as b ON(c.cid=b.cid)) as r0 join 
+	    product_info as p1 ON(r0.bill_id=p1.bill_id))as r1 join product  p2 ON(r1.pid=p2.pid)
+            where name= :name;
+	
+	
+	EXEC SQL select c_name INTO :a from( (customer as c join billing as b ON(c.cid=b.cid)) as r0 join 
+	product_info as p1 ON(r0.bill_id=p1.bill_id))as r1 join product  p2 ON(r1.pid=p2.pid)
+    where name= :name;
+                
+	while(m<p)
+	
+               {
+				   printf("%s\n",a[m]);	
+					m++;
+        
+	       }
+
+    return 0;
+
+   }		
+}
+
+int bill_not_paid()
+{
+EXEC SQL BEGIN DECLARE SECTION;    //remaining not null  bill not paid
+char a[50][30];
+int p,m=0;
+
+
+
+EXEC SQL END DECLARE SECTION;
+
+//int main()
+
+
+
+	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+
+    EXEC SQL set search_path to jewellery_shop;
+
+    EXEC SQL select count(c_name) INTO :p from customer where cid IN(select distinct cid from customer_transaction Except select distinct 		cid from customer_transaction where remaining=0);
+	
+	EXEC SQL select c_name INTO :a from customer where cid IN(select distinct cid from customer_transaction Except select distinct cid 		from customer_transaction where remaining=0); 
+                
+	while(m<p)
+	
+               {
+				   printf("%s\n",a[m]);	
+					m++;
+        
+	       }
+
+    return 0;
+}
+
+
+int sold_product_by_month()
+{
+EXEC SQL BEGIN DECLARE SECTION;   //sold product by month
+
+int m=0;
+float b;
+long c;
+
+
+
+EXEC SQL END DECLARE SECTION;
+
+//int main()
+
+	{
+
+	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+
+    EXEC SQL set search_path to jewellery_shop;
+
+
+	
+	EXEC SQL select  sum(p2.weight) as gold_sold , sum(price_total) as price_of_gold INTO :b,:c from (product_info as p1 join product as 		p2 ON(p1.pid=p2.pid) natural join billing) where 
+	date='06/12/2016' and material='gold';
+
+				   printf("%-5.2f %5ld\n",b,c);	
+					
+
+    return 0;
+
+	}
+}
+
+
+
+
+int total_stock()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	float a;
+
+EXEC SQL END DECLARE SECTION;   // total stock
+
+//int main()
+{
+		
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+    EXEC SQL set search_path to jewellery_shop;
+  
+	EXEC SQL select sum(weight)as Remaining_gold_in_shop INTO :a from product  where material='gold' Except (select  sum(p2.weight)  		as gold_sold from (product_info as p1 join product as p2 ON(p1.pid=p2.pid) natural join billing) where 
+	material='gold');
+     
+        printf("%.2f",a);
+  
+    return 0;
+}
+}
+
+
+int total_profit()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	
+	int b,a;
+
+EXEC SQL END DECLARE SECTION;     //total profit
+
+//int main()
+{
+	
+	printf("Enter year name of year");
+	scanf("%d",&b);	
+	
+	 EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+	 EXEC SQL set search_path to jewellery_shop;
+
+	 EXEC SQL select sum(net_profit)  INTO :a from billing where extract(year from date)=:b;
+	
+     
+        printf("%ld \n",a);
+  
+    return 0;
+}
+}
+
+
+int bill_paid_at_first_time()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+char a[50][30];
+int p,m=0,b[30],c[30];
+
+
+
+EXEC SQL END DECLARE SECTION;         // bill paid at first time.
+
+//int main()
+
+{
+
+	
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+
+    EXEC SQL set search_path to jewellery_shop;
+
+    EXEC SQL SELECT distinct count(c_name) INTO :p from billing as b natural join customer as c
+	where (payable-(cash+silver_return+gold_return))=0;
+	
+	EXEC SQL select  distinct c_name,bill_id,cphone_no INTO :a,:b,:c from billing as b natural join customer as c
+		where (payable-(cash+silver_return+gold_return))=0;; 
+                
+	while(m<p)
+	
+               {
+				   printf("%-15s %-5d %5d\n",a[m],b[m],c[m]);	
+					m++;
+        
+	       }
+
+    return 0;
+
+}
+}   
+
+int valid_user()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+ char username[20],password[20];
+int c;
+EXEC SQL END DECLARE SECTION;
+
+//int main()
+{	
+	
+	
+	printf("Enter username\n");
+    	scanf("%s",username);
+	
+	printf("password\n");
+    	scanf("%s",password);
+	 	
+	       
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	EXEC SQL SELECT validity1(:username,:password) into :c;
+	
+	if(c==1)
+	{
+		printf("successfully login\n");
+		return 1;
+	}
+	else
+	{	
+		printf("You are not allowed to access\n");
+		return 0;	
+	}
+
+	
+	EXEC SQL COMMIT;
+	
+	   
+}
+}
+
+
+int new_admin()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+      int cid;
+      char username[20],password[20],a[30],b[30];
+      long phn;
+      bool c;
+ EXEC SQL END DECLARE SECTION;
+
+//int main()
+{	
+	
+	
+	printf("Enter username\n");
+        scanf("%20s",username);
+     	
+	printf("Enter password\n");
+        scanf("%20s",password);
+
+
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	EXEC SQL SELECT check_username(:username) into :c;
+
+	if(c)
+	{
+		printf("username already existed");
+	}
+	else
+	{	
+		printf("Enter password\n");
+        	scanf("%20s",password);
+		EXEC SQL INSERT INTO Admin(username,password) VALUES(:username,:password);
+	        printf("Return successfully");	
+	}
+
+	
+	EXEC SQL COMMIT;
+	
+	return 0;     
+}
+}
+
+
+int insert_scheme()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int id,duration,installment,ramount,period;
+    char s_name;
+ 
+ EXEC SQL END DECLARE SECTION;
+
+//int main()
+{	
+	
+	
+	printf("Scheme_id\n");
+    	scanf("%d",&id);
+	printf("duration\n");
+    	scanf("%d",&duration);
+	printf("installment\n");
+    	scanf("%d",&installment);
+	printf("return_amount\n");
+	scanf("%d",&ramount);
+	printf("scheme_name");
+	scanf("%s",&s_name);
+	printf("period to pay installment");
+	scanf("%d",&period);
+        
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	
+	EXEC SQL INSERT INTO scheme(scheme_id, duration, installment, return_amount, scheme_name, period)
+         VALUES(:id,:duration,:installment,:ramount,:s_name,:period);
+	
+
+	EXEC SQL COMMIT;
+	return 0;     
+}
+}
+
+
+int insert_product()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+   
+    char name[20],material[20],style[20];
+	float percentage,weight;
+	int pid,peices;
+ 
+ EXEC SQL END DECLARE SECTION;
+
+//int main()
+{	
+	
+	
+	printf("pid\n");
+    	scanf("%d",&pid);
+	printf("name\n");
+    	scanf("%10s",name);
+	printf("material\n");
+    	scanf("%10s",material);
+	printf("style\n");
+	scanf("%10s",style);
+	printf("percentage\n");
+	scanf("%f",&percentage);
+	printf("weight\n");
+	scanf("%f",&weight);
+	printf("no_peices\n");
+	scanf("%d",&peices);
+        
+    	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	
+	EXEC SQL INSERT INTO product(pid,name,material,style,percentage,weight,no_peices)
+         VALUES(:pid,:name,:material,:style,:percentage,:weight,:peices);
+	
+
+	EXEC SQL COMMIT;
+	printf("succefully inserted");
+	return 0;     
+}
+}
+
+
+int insert_customer()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    char name[20],city[20],local[20],email[20];
+   long phn;
+ EXEC SQL END DECLARE SECTION;
+
+//int main()
+	
+	
+	
+	printf("Enter name\n");
+        scanf("%20s",name);
+        printf("Enter city\n");
+        scanf("%20s",city);
+        printf("enter locality\n");
+        scanf("%20s",local);
+        printf("Enter email\n");
+        scanf("%20s",email);
+        printf("Enter phone no.\n");
+        scanf("%ld",&phn);
+
+        
+
+
+
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	EXEC SQL SELECT autoincrement_id() into :cid;
+
+	EXEC SQL INSERT INTO Customer(cid,c_name,c_city,c_locality,cphone_no,c_email) VALUES(:cid,:name,:city,:local,:phn,:email);
+	printf("Return successfully");
+	EXEC SQL COMMIT;
+	return 0;     
+}
+
+
+
+int update_customer()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    char email[20];
+   long phn;
+ EXEC SQL END DECLARE SECTION;
+//int main()
+	
+	printf("Enter cid\n");
+        scanf("%d",&cid);
+	printf("Enter phone no.\n");
+	scanf("%ld",&phn);
+	printf("Enter email\n");
+	scanf("%s",email);
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+
+	EXEC SQL UPDATE customer SET cphone_no=:phn,c_email=:email where cid=:cid;
+	EXEC SQL COMMIT;
+	return 0;
+
+}
+
+int updatecustomer_scheme()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    int sid;
+    bool purchased;
+    
+ EXEC SQL END DECLARE SECTION;
+//int main()
+{	
+	printf("Enter cid\n");
+        scanf("%d",&cid);
+	printf("Enter sid");
+	scanf("%d",&sid);
+
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+
+	EXEC SQL  UPDATE customer_scheme SET purchased=true where cid=:cid and sid=:sid; 
+
+
+		
+	EXEC SQL COMMIT;
+	return 0;
+}
+}
+
+int update_product()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int b,pid;
+    int peices,no_peices1;
+    float weight,newweight,a;
+    
+    
+ EXEC SQL END DECLARE SECTION;
+//int main()
+		
+	printf("Enter pid of product");
+	scanf("%d",&pid);
+	printf("Enter weight of product purchased\n");
+        scanf("%f",&weight);
+	printf("Enter no_peices purchased");
+	scanf("%d",&peices);
+
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+	
+	EXEC SQL select weight,no_peices INTO :a,:b from product where pid=:pid;
+
+	
+	newweight=a-weight;
+	no_peices1=b-peices;
+	
+	EXEC SQL  UPDATE product SET weight=:newweight,no_peices=:no_peices1 where pid=:pid; 
+
+	
+		
+	EXEC SQL COMMIT;
+	return 0;
+
+}
+
+int update_salary()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int eid;
+    int salary;
+    
+ EXEC SQL END DECLARE SECTION;
+	
+	printf("Enter eid\n");
+        scanf("%d",&eid);
+	printf("Enter new salary");
+	scanf("%d",&salary);
+
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+
+	EXEC SQL  UPDATE employee SET salary=:salary where eid=:eid; 
+
+
+		
+	EXEC SQL COMMIT;
+	return 0;
+
+}
+
+int delete_admin()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+   char username[20];
+ EXEC SQL END DECLARE SECTION;
+	
+	printf("Enter username\n");
+        scanf("%s",username);
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+	EXEC SQL DELETE from admin WHERE username=:username;
+	EXEC SQL COMMIT;
+
+return 0;
+}
+
+
+int delete_cust_scheme()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid,sid;
+ 
+ EXEC SQL END DECLARE SECTION;
+		
+		printf("Enter cid\n");
+		scanf("%d",&cid);
+		printf("Enter sid\n");
+		scanf("%d",&sid);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL DELETE from customer_scheme WHERE cid=:cid and sid=:sid;
+		EXEC SQL COMMIT;
+	
+return 0;
+}
+
+int delete_emp()
+{
+EXEC SQL BEGIN DECLARE SECTION;
+    int eid;
+ 
+ EXEC SQL END DECLARE SECTION;
+	//int main()
+		
+		printf("Enter eid\n");
+		scanf("%d",&eid);
+		
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL DELETE from employee WHERE eid=:eid;
+		EXEC SQL COMMIT;
+	
+return 0;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+int main()
+{
+int choice=0,option_choosen=0,cid,mid,pid,sid,eid, ch=1,option=0;
+
+int x=valid_user();                                                    ////////////////////////////////////////////////////////
+
+if(x==1)						/////////////////////////////////////////////////////////
+{
+	while(ch==1)						////////////////////////////////////////////////////
+	   {
+		printf("OPTIONS.......\n\n\n");
+
+		printf("1. MASTER\n");
+	   	printf("2. CUSTOMER\n");
+	    	printf("3. SCHEME\n");
+		printf("4. MORTGAGE\n");
+		printf("5. EMPLOYEE\n");
+		printf("6. PRODUCT_LIST\n");
+		printf("7. SUPPLIER\n");
+		printf("8. EXTRA\n");
+		printf("9. DEVELOPER OPTION\n");
+		printf("10. EXIT\n");
+		printf("CHOOSE THE OPTION");
+		scanf("%d",&choice);
+		
+		switch(choice)					/////////////////////////////////////////
+		{
+			case 1:
+						printf("MASTER\n\n\n");
+				label9:	printf("LIST OF FOLLOWING TABLES.......\n\n\n");
+		
+	   						printf("1. insert_CUSTOMERS\n "); //////
+	   						printf("2. insert_SCHEMES\n");   /////
+	   						printf("3.  delete_admin\n");    //////
+							printf("4. insert_BILLING\n");
+							printf("5. delete_cust_scheme\n");///////////
+							printf("6. insert_PRODUCTS\n");	////////
+							printf("7. CUSTOMER_update\n");	////////
+							printf("8. CUSTOMER_SCHEME_update\n");   /////////
+							printf("9. update_product\n");     //////////
+							printf("10.update_salary\n");      /////////
+							printf("11. delete_emp\n");      /////////
+							//printf("12. MORTGAGE\n");
+							//printf("13. MORTAGE TRANSACTION\n");
+							printf("12.ADD NEW ADMIN");       ///////////
+							printf("13. EXIT \n");
+							printf("14. GO BACK\n");
+							
+		
+							printf("CHOOSE THE OPTION");
+							scanf("%d",&option_choosen);		
+				
+							switch(option_choosen)
+								{
+									case 1:
+											insert_customer();   ////////////
+											break;
+									case 2:
+											insert_scheme();  //////
+											break;
+									case 3:
+											delete_admin();////////
+											break;
+									case 4:
+											//insert_Billing();
+											break;
+									case 5:
+											delete_cust_scheme();   ///////////
+											break;
+									case 6: 
+											insert_product();   ///////
+											break;
+									case 7: 
+											update_customer();////////
+											break;
+									case 8:
+											updatecustomer_scheme();////////////
+											break;
+									case 9:
+											update_product();    ///////
+											break;
+									case 10:
+											update_salary();     //////////
+											break;
+									case 11:
+											delete_emp();   ///////////
+											break;
+									
+									case 12:  
+											new_admin();//////
+											break;
+									case 13:
+											 exit(0);
+									case 14:
+											 goto label9;		
+								 }
+				   	
+				      break;
+			case 2:
+					printf("CUSTOMER\n\n\n");
+				  Customer_list();
+				  	
+				  		printf("OPTIONS.......\n\n\n");
+							 printf("1. VIEW PARTICULAR_CUSTOMER_TRANSACTION\n");
+	   					    	 printf("2. EXIT \n");
+	    			 
+	    					 printf("CHOOSE THE OPTION");
+		            		 	 scanf("%d",&option_choosen);
+					 
+						 switch(option_choosen)
+							       {
+									case 1:
+									label1: //printf("input customer id ");
+										//scanf("%d",&cid);
+										list_customer_transaction();
+										printf("\n\n 1.View Bill\n2.Go Back\n3.Exit");
+										scanf("%d",&option_choosen);
+										switch(option_choosen)
+										{
+											case 1: 
+												//printf("Bill id");
+												view_bill();
+												break;
+												    												case 2:
+												goto label1;
+											case 3:
+												exit(0);
+										 }
+									case 2:
+										exit(0);
+								  }
+					break;
+			case 3:
+					printf("SCHEME\n\n\n");	
+					scheme();
+				  	
+				  	label2:printf("OPTIONS.......\n\n\n");
+					
+							 printf("1. VIEW CUSTOMER_SCHEME");
+	   						 printf("2. VIEW PARTICULAR SCHEME_TRANSACTION");
+	   						 printf("3. VIEW OVERALL SCHEME_TRANSACTION");
+	    					 	 printf("4. GO BACK");	
+	    					 	 printf("5. EXIT ");
+	    			 
+	    					 printf("CHOOSE THE OPTION");
+		            		 	 scanf("%d",&option_choosen);
+					 
+							 switch(option_choosen)
+								{
+									case 1:
+										customer_scheme();
+										break;
+									case 2:
+										printf("input customer id and scheme id ");
+										scanf("%d %d",&cid,&sid);
+										cscheme_transaction( cid, sid);
+										break;
+									case 3:
+										list_scheme_transaction();
+										break;
+									case 4:
+										goto label2;
+									case 5:
+										exit(0);	
+								}
+					break;	
+				
+		    case 4:
+					printf("MORTGAGE\n\n\n");
+					list_mortgage();
+				  	
+				  	label3: printf("OPTIONS.......\n\n\n");
+		
+							 printf("1. VIEW OVERALL MORTGAGE TRANSACTION");
+	   						 printf("2. VIEW PARTICULAR MORTGAGE_TRANSACTION");
+	   						 printf("3. MORTGAGE PRODUCT");
+	    					 	 printf("4. GO BACK");	
+	    					 	 printf("5. EXIT ");
+	    			 
+	    					 printf("CHOOSE THE OPTION");
+		           			 scanf("%d",&option_choosen);
+					 
+							 switch(option_choosen)
+								{
+									case 1:
+										mortgage_transaction();
+										break;
+									case 2:
+										cmortgage_transaction();
+										break;
+									case 3:
+										mortgage_product();
+										break;
+									case 4:
+										goto label3;
+									case 5:
+										exit(0);	
+					                          }
+				      break;       
+			case 5:
+					printf("EMPLOYEE\n\n\n");
+				list_employee();
+				  	
+				  	label4:	printf("OPTIONS.......\n\n\n");
+					 printf("1. VIEW OVERALL EMPLOYEE_TRANSACTION");
+	   				 printf("2. VIEW PARTICULAR EMPLOYEE_TRANSACTION");
+	    			 	 printf("3. GO BACK");	
+	    			 	 printf("4. EXIT ");
+	    			 
+	    			 printf("CHOOSE THE OPTION");
+		             	 scanf("%d",&option_choosen);
+					 
+					 switch(option_choosen)
+					{
+						case 1:
+								printf("not available");
+								//employee_transaction();
+								break;
+						case 2:
+								printf("not available");
+								//printf("input employee id ");
+								//scanf("%d",&eid);
+								//list_employee_transaction(int eid);
+								break;
+						case 3:
+								goto label4;
+						case 4:
+								exit(0);
+					}	
+				break;
+			case 6:
+					printf("PRODUCT\n\n\n");
+				list_product();
+				break;
+				  	
+			case 7:
+					printf("SUPPLIER\n\n\n");
+					list_supplier();
+				  	
+				  	label5: printf("OPTIONS.......\n\n\n");
+					 printf("1. VIEW OVERALL SUPPLIER_TRANSACTION");
+	   				 printf("2. VIEW PARTICULAR SUPPLIER_TRANSACTION");
+	    			         printf("3. GO BACK");	
+	    			         printf("4. EXIT ");
+	    			 
+	    			 printf("CHOOSE THE OPTION");
+		                 scanf("%d",&option_choosen);
+					 
+					 switch(option_choosen)
+					{
+						case 1:
+							supplier_transaction();
+							break;
+						case 2:
+							ssupplier_transaction();
+							break;
+						case 3:
+								goto label5;
+						case 4:
+								exit(0);		
+					}
+				break;
+			case 8:
+			
+				printf("EXTRA\n\n\n");
+				printf("extra queries\n\n");
+			 printf(" OPTION.....\n\n");
+
+				  printf("1)  FIND NAME OF CUSTOMER WHOSE INSTALLMENT HAS BEEN DELAYED AND NO. OF INSTALLMENT DELAYED\n");
+				  printf("2)  PURCHASED_PARTICULAR_PRODUCT\n");
+				  printf("3)  FIND WHICH BILLS ARE NOT PAID AND NAME OF THAT CUSTOMER\n");
+				  printf("4)  FIND MOST SOLD PRODUCT BY MONTH\n");
+				  printf("5)  TOTAL PROFIT\n");
+				  printf("6)  FIND WHICH SCHEME IS MOSTLY PREFERRED\n");
+				  printf("7)  LIST OF SUPPLIERS WHOSE PAYMENT IS REMAINING \n");
+				  printf("8)  FIND EMPLOYEE WHO HAS TAKEN ADVANCE PAYMENT\n");
+				  printf("9)  FIND AMOUNT LEFT FOR ALL MORTGAGE HOLDER\n");
+				  printf("10) FIND TOTAL STOCK\n");
+				  printf("11) FIND LIST OF CUSTOMERS WHOSE SCHEME HAS FINISHED BUT THEY DIDN,T PURCHASE ANYTHING\n");
+				  printf("12) LIST BILL WHICH IS PAID AT FIRST TIME\n");
+				  printf("13) exit\n");
+				 
+				  	
+				    printf("input your choice");
+				    scanf("%d",&option);
+				    
+				    switch(option)
+				    {
+				    	case 1:
+							printf("1");
+							//delayed_installment();
+							break;
+				    			
+				    	case 2:
+				    			//printf("input product name\n");
+				    			//gets(product_name);
+				    			particular_product_purchased();
+							break;
+				    	
+				    	case 3:
+				    			bill_not_paid();
+				    			break;
+				    	case 4:
+				    			sold_product_by_month();
+				    			break;
+				    	case 5:
+				    			total_profit();
+				    			break;
+				    	case 6:
+							printf("6");
+				    			//most_preffered_scheme();
+				    			break;
+				    	case 7:
+							printf("7");
+				    			//suppliers_remaining_payment();
+				    			break;
+				    	case 8:
+							printf("8");
+				    			//advance_payment_of_emp();
+				    			break;
+				    	case 9:
+							printf("9");
+				    			//amount_left_by_mortgage();
+				    			break;
+				    	case 10:
+				    	      		total_stock();
+				    			break;
+				    	case 11:
+							printf("11");
+				    		        //not_purchased();
+							break;
+					case 12:        
+							bill_paid_at_first_time();
+							break;
+					case 13:
+				    			exit(0);
+							break;
+				    }																								
+
+				printf("done\n");		
+				break;	
+											
+
+			case 9:
+				 printf("develop option");
+				 break;	
+			case 10:
+				exit(0);
+		}								/////////////////////////////////
+		
+		printf(" to continue ----press 1\n");
+		scanf("%d",&ch);
+           }
+}
+else
+    	exit(0);									        																			
+}
+
+
+
+
+
+
+
+
+
+
+

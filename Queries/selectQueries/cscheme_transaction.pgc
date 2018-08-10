@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+	char **a,**b;
+	
+	int *st,*c,*s,*p,*pt,d,inst,per;
+	int n,i=0,m,l,v;
+	bool check;
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{	int x,y;
+		printf("Enter Customer ID");
+		scanf("%d",&m);
+		printf("Enter Scheme ID");
+		scanf("%d",&l);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM scheme_transaction where cid=:m and schemeid=:l;
+		if(n==0)
+			printf("YOU HAVE ENTERED WRONG SCHEME ID OR CUSTOMER ID");
+		else
+		{	
+		printf("All Scheme Transaction\n");
+		
+		
+			EXEC SQL SELECT s_transid,cid,c_name, schemeid,paid,penalty,date INTO :st,:c,:a,:s,:p,:pt,:b from scheme_transaction natural 				join customer where cid=:m and schemeid=:l; 
+			while(i<n)
+			{
+				printf("%-3d   %-3d  %-30s %-3d   %-6d   %-5d  %-20s\n",st[i],c[i],a[i],s[i],p[i],pt[i],b[i]);
+				i++;
+				}
+					
+		
+			EXEC SQL select duration,installment,period INTO :d,:inst,:per from scheme where scheme_id=:l;
+			printf("%d %d %d\n",d,inst,per);
+			x=d/per;
+			y=x*inst;
+			EXEC SQL select purchased INTO:check from customer_scheme where cid=:m and sid=:l;
+			EXEC SQL select sum(paid) INTO:v from scheme_transaction where cid=:m and schemeid=:l;
+			if(v==y&&check==true)
+				printf("Scheme complete and item has been purchased");
+			else if(v==y&&check==false)
+				printf("Scheme complete but item has not been purchased");
+			
+			
+		}
+		
+    return 0;
+}
+
+

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+      int cid;
+      char username[20],password[20],*a,*b;
+      long phn;
+      bool c;
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{	
+	
+	
+	printf("Enter username\n");
+        scanf("%20s",username);
+     	
+	printf("Enter password\n");
+        scanf("%20s",password);
+
+
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	EXEC SQL SELECT check_username(:username) into :c;
+
+	if(c)
+	{
+		printf("username already existed");
+	}
+	else
+	{	
+		printf("Enter password\n");
+        	scanf("%20s",password);
+		EXEC SQL INSERT INTO Admin(username,password) VALUES(:username,:password);
+	        printf("Return successfully");	
+	}
+
+	
+	EXEC SQL COMMIT;
+	
+	return 0;     
+}

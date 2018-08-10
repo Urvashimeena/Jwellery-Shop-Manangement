@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+    int cid;
+    char name[20],city[20],local[20],email[20];
+   long phn;
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{	
+	
+	
+	printf("Enter name\n");
+        scanf("%20s",name);
+        printf("Enter city\n");
+        scanf("%20s",city);
+        printf("enter locality\n");
+        scanf("%20s",local);
+        printf("Enter email\n");
+        scanf("%20s",email);
+        printf("Enter phone no.\n");
+        scanf("%ld",&phn);
+
+        
+
+
+
+        EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+   	EXEC SQL SELECT autoincrement_id() into :cid;
+
+	EXEC SQL INSERT INTO Customer(cid,c_name,c_city,c_locality,cphone_no,c_email) VALUES(:cid,:name,:city,:local,:phn,:email);
+	printf("Return successfully");
+	EXEC SQL COMMIT;
+	return 0;     
+}

@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+    int b,pid;
+    int peices,no_peices1;
+    float weight,newweight,a;
+    
+    
+ EXEC SQL END DECLARE SECTION;
+int main()
+{		
+	printf("Enter pid of product");
+	scanf("%d",&pid);
+	printf("Enter weight of product purchased\n");
+        scanf("%f",&weight);
+	printf("Enter no_peices purchased");
+	scanf("%d",&peices);
+
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;
+	
+	EXEC SQL select weight,no_peices INTO :a,:b from product where pid=:pid;
+
+	
+	newweight=a-weight;
+	no_peices1=b-peices;
+	
+	EXEC SQL  UPDATE product SET weight=:newweight,no_peices=:no_peices1 where pid=:pid; 
+
+	
+		
+	EXEC SQL COMMIT;
+	return 0;
+}

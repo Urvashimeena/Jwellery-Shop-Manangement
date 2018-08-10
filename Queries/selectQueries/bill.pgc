@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+	char *a,**b,*date;
+	int p1,*p2,*p3,*p4,*p5;
+	int q1,q2,q3,q4,q5,q6,n,m=0;
+	float *c1;	
+ 	EXEC SQL END DECLARE SECTION;	
+
+int main()
+{
+	
+	EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+	EXEC SQL set search_path to jewellery_shop;
+	
+	EXEC SQL SELECT count(*)  INTO :n from product_info where bill_id=701;
+
+	EXEC SQL SELECT bill_id,c_name INTO :p1,:a FROM billing as b join customer as c on(b.cid=c.cid) where bill_id=701 and c.cid=2;  
+	
+	printf("%10d  %20s \n\n\n",p1,a);
+	printf("name    \t      price_per_10g     wastage   labour    price_total   quantity\n\n");
+	
+	EXEC SQL SELECT name,price_per_10g,wastage,labour,price_total,quantity INTO :b,:c1,:p2,:p3,:p4,:p5 FROM (product as l2 join 		product_info as l1 ON(l2.pid=l1.pid)) where bill_id=701;
+	
+	
+	
+	while(m<n)
+	{
+	
+		printf("%-20s  %10.2f  %10d  %10d   %10d  %10d \n",b[m],c1[m],p2[m],p3[m],p4[m],p5[m]);
+		m++;	
+	}
+	
+	EXEC SQL SELECT discount,payable,net_profit,cash,gold_return,silver_return,date INTO :q1,:q2,:q3,:q4,:q5,:q6,:date from
+	billing where bill_id=701;
+	
+	printf("discount=%3d \n",q1);
+	printf("payable=%3d \n",q2);
+	printf("net_profit=%3d \n",q3);
+	printf("cash=%3d \n",q4);
+	printf("gold=%3d \n",q5);
+	printf("silver=%d \n",q6);
+	printf("date=%10s \n",date);
+
+	
+	 
+    return 0;
+}

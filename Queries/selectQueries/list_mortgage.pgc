@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+#include <ecpglib.h>
+#include <pgtypes_date.h>
+
+//EXEC SQL include sqlhdr.h;
+
+int main()
+{
+	EXEC SQL BEGIN DECLARE SECTION;
+	char *name;
+
+	int mid,p,phn,*mdy;
+	int n;
+	int m=601;
+ 	EXEC SQL END DECLARE SECTION;	
+		
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(mid) INTO:n FROM mortgage;
+		printf("Customers\n");
+		printf("%d",n);
+		while(m<n+601)
+		{
+		EXEC SQL SELECT mid,customer_name,price,phone_no INTO :mid,:name,:d,:p,:phn FROM jewellery_shop.mortgage where mid = :m;
+		printf("%3d. %-30s %-6d %-10d\n",m,name,p,phn);
+		m=m+1;
+		}
+    return 0;
+}

@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+      int cid,a=1,bill;
+      char date[15];
+      long phn;
+      bool c;
+      int pid,wastage,labour,pricet,quantity;
+      int payable=0,net_profit=0,discount,cash,gold,silver,a1,b1;
+      float price,weight;
+EXEC SQL END DECLARE SECTION;
+
+int main()
+{   
+    EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+        EXEC SQL set search_path to jewellery_shop;       
+    printf("Enter bill_id\n");
+        scanf("%d",&bill);
+    printf("Enter cid\n");
+        scanf("%d",&cid);
+    printf("Enter product details\n");
+   
+    while(a==1)
+    {
+            printf("Enter the pid\n");
+            scanf("%d",&pid);
+            printf("Enter the price_per_10g\n");
+            scanf("%f",&price);
+            printf("Enter the wastage\n");
+            scanf("%d",&wastage);
+            printf("Enter the labour\n");
+            scanf("%d",&labour);
+            printf("Enter the quantity\n");
+            scanf("%d",&quantity);
+            printf("Enter the weight\n");
+            scanf("%f",&weight);
+       
+            printf("do you want to enter more product\n");
+            printf("1) yes\n");
+            printf("2) No\n");
+            scanf("%d",&a);
+        if(wastage==0)
+        {
+            pricet=((price)/10*(weight)*wastage/100*quantity)+labour;
+            net_profit=labour+(price)/10*(weight)+net_profit;
+        }
+        else
+        {   
+            pricet=((price)/10*(weight)*quantity)+labour;
+            net_profit=labour+(price)/10*(weight)*(wastage-100)/100+net_profit;
+        }
+       
+        EXEC SQL INSERT INTO product_info(bill_id, pid, price_per_10g, wastage, labour, price_total, quantity, weight)
+        VALUES (:bill,:pid,:price,:wastage,:labour,:pricet,:quantity,:weight);
+       
+     	Update_Product(pid,quantity,weight);
+        payable=payable+pricet;
+           
+       
+     }
+       
+   
+    printf("Enter discount\n");
+        scanf("%d",&discount);
+    printf("Enter cash amount paid by customer\n");
+        scanf("%d",&cash);
+    printf("Enter silver_returns\n");
+        scanf("%d",&silver);
+    printf("Enter gold_returns\n");
+        scanf("%d",&gold);
+    printf("Enter date\n");
+        scanf("%s",date);
+    
+
+        EXEC SQL INSERT INTO billing(bill_id, cid, discount, payable, net_profit, cash, silver_return, gold_return, date)
+    VALUES (:bill,:cid,:net_profit,:cash,:silver,:gold,:date);
+
+    if(silver!=0||gold!=0)
+   
+    {   
+        printf("Enter weight of gold");
+        scanf("%d",&a1);
+        EXEC SQL UPDATE product SET weight=weight+a1 where cid=521;
+        printf("Enter weight of silver");
+        scanf("%d",&b1);
+        EXEC SQL UPDATE product SET weight=weight+b1 where cid=522;
+           
+   
+    }
+	printf("Enter Transaction ID");
+	scanf("%d",&ctid);
+	remaining = payable - (cash + gold + silver )
+	EXEC SQL INSERT INTO customer_transaction(c_transid, cid, remaining, bill_id, amount, date)
+     VALUES (:ctid,:cid,:remaining,:bill, :payable, :date);
+
+}

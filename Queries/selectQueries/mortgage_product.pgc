@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <libpq-fe.h>
+#include <stdlib.h>
+EXEC SQL BEGIN DECLARE SECTION;
+	char **a,**b,**c;
+	float *g,*s;
+	int *st,*p,*pt;
+	int n,i=0,m;
+ EXEC SQL END DECLARE SECTION;
+
+int main()
+{
+		printf("Enter MID");
+		scanf("%d",&m);
+		EXEC SQL CONNECT TO "201552023@10.100.1.62" USER "201552023" USING "201552023";
+		EXEC SQL set search_path to jewellery_shop;
+		EXEC SQL select count(*) INTO:n FROM m_product_info where mid=:m;
+	 
+		printf("Products\n");
+		
+		
+			EXEC SQL SELECT customer_name,pname,weight,quantity,material INTO :a,:b,:s,:p,:c from  mortgage natural join  m_product_info where mid=:m;
+			while(i<n)
+			{
+				printf("%-30s %-20s %-8.3f %5d %-10s\n",a[i],b[i],s[i],p[i],c[i]);
+				i++;
+					
+			}
+		
+    return 0;
+}
+
+
